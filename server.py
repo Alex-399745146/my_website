@@ -9,6 +9,15 @@ hostName = "localhost"
 serverPort = 8080
 ROOT_DIR = "."   # Папка с HTML‑файлами (где лежит server.py).
 
+# Ключ - это путь, а значение это файл шаблон.
+templates_map = {
+    "/": "index.html",
+    "/index": "index.html",
+    "/index/": "index.html",
+    "/catalog.html": "catalog.html",
+    "/category.html": "category.html",
+    "/contacts.html": "contacts.html",
+}
 
 class MyServer(BaseHTTPRequestHandler):
 
@@ -17,14 +26,8 @@ class MyServer(BaseHTTPRequestHandler):
         url_path = urlparse(self.path).path
 
         # index.html -> главная и т.д.
-        if url_path in ["/", "/index.html"]:
-            filename = "index.html"
-        elif url_path == "/catalog.html":
-            filename = "catalog.html"
-        elif url_path == "/category.html":
-            filename = "category.html"
-        elif url_path == "/contacts.html":
-            filename = "contacts.html"
+        if url_path in templates_map:
+            filename = templates_map[url_path]
         else:
             # Любые другие пути 404 ошибка.
             self.send_response(404)
@@ -56,7 +59,7 @@ class MyServer(BaseHTTPRequestHandler):
 
 if __name__ == "__main__":
     webServer = HTTPServer((hostName, serverPort), MyServer)
-    print(f"Сервер стартовал, и доступен по адресу http://{hostName} порт:{serverPort} слушает запросы.")
+    print(f"Сервер стартовал, и доступен по адресу http://{hostName}:{serverPort}")
 
     try:
         webServer.serve_forever()
